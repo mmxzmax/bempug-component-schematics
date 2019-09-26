@@ -87,7 +87,10 @@ function addDeclarationToNgModule(options, exports, componentPath) {
 }
 exports.addDeclarationToNgModule = addDeclarationToNgModule;
 function deleteCommon(host, options) {
-    host.delete(`${options.path}/common/bempugMixin.pug`);
+    const path = `${options.path}/common/bempugMixin.pug`;
+    if (host.exists(path)) {
+        host.delete(`${options.path}/common/bempugMixin.pug`);
+    }
 }
 function bempugComponent(options) {
     return (host, context) => {

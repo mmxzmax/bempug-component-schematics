@@ -133,7 +133,10 @@ export function addDeclarationToNgModule(options: ModuleOptions, exports: boolea
 }
 
 function deleteCommon(host: Tree, options: BemPugOptions) {
-  host.delete(`${options.path}/common/bempugMixin.pug`);
+  const path = `${options.path}/common/bempugMixin.pug`;
+  if(host.exists(path)) {
+    host.delete(`${options.path}/common/bempugMixin.pug`);
+  }
 }
 
 export function bempugComponent(options: BemPugOptions): Rule {
