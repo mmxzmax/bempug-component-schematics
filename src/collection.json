@@ -1,0 +1,10 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "bempug-component": {
+      "description": "A blank schematic.",
+      "factory": "./bempug-component/index#bempugComponent",
+      "schema": "./bempug-component/schema.json"
+    }
+  }
+}
