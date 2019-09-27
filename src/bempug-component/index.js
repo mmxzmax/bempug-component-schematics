@@ -86,10 +86,10 @@ function addDeclarationToNgModule(options, exports, componentPath) {
     };
 }
 exports.addDeclarationToNgModule = addDeclarationToNgModule;
-function deleteCommon(host, options) {
-    const path = `${options.path}/common/bempugMixin.pug`;
+function deleteCommon(host) {
+    const path = `/src/app/common/bempugMixin.pug`;
     if (host.exists(path)) {
-        host.delete(`${options.path}/common/bempugMixin.pug`);
+        host.delete(`/src/app/common/bempugMixin.pug`);
     }
 }
 function bempugComponent(options) {
@@ -97,15 +97,21 @@ function bempugComponent(options) {
         setupOptions(options, host);
         options.path = options.path ? core_1.normalize(options.path) : options.path;
         options.module = options.module || find_module_1.findModuleFromOptions(host, options) || '';
-        deleteCommon(host, options);
+        options.bemPugMixinPath = find_module_1.buildRelativePath(`${options.path}/${options.name}/${options.name}.component.ts`, `/src/app/common/bempugMixin.pug`);
+        deleteCommon(host);
         const templateSource = schematics_1.apply(schematics_1.url('./files'), [
             filterTemplates(options),
             schematics_1.template(Object.assign({}, core_1.strings, options)),
             schematics_1.move(options.path || '')
         ]);
+        const mixinSource = schematics_1.apply(schematics_1.url('./common'), [
+            schematics_1.template(Object.assign({}, core_1.strings, options)),
+            schematics_1.move('/src/app/' || '')
+        ]);
         const rule = schematics_1.chain([
             schematics_1.branchAndMerge(schematics_1.chain([
                 schematics_1.mergeWith(templateSource),
+                schematics_1.mergeWith(mixinSource),
                 addDeclarationToNgModule(options, !!options.export, `${options.path}/${options.name}/${options.name}-component.module` || '')
             ]), 14)
         ]);

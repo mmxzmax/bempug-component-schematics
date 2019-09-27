@@ -6,4 +6,5 @@ export interface BemPugOptions {
     componentModule?: boolean;
     module?: string;
     export?: boolean;
+    bemPugMixinPath?: string;
 }

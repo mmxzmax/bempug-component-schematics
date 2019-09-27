@@ -132,10 +132,10 @@ export function addDeclarationToNgModule(options: ModuleOptions, exports: boolea
   };
 }
 
-function deleteCommon(host: Tree, options: BemPugOptions) {
-  const path = `${options.path}/common/bempugMixin.pug`;
+function deleteCommon(host: Tree) {
+  const path = `/src/app/common/bempugMixin.pug`;
   if(host.exists(path)) {
-    host.delete(`${options.path}/common/bempugMixin.pug`);
+    host.delete(`/src/app/common/bempugMixin.pug`);
   }
 }
 
@@ -147,8 +147,9 @@ export function bempugComponent(options: BemPugOptions): Rule {
     setupOptions(options, host);
     options.path = options.path ? normalize(options.path) : options.path;
     options.module = options.module || findModuleFromOptions(host, options) || '';
+    options.bemPugMixinPath = buildRelativePath(`${options.path}/${options.name}/${options.name}.component.ts`, `/src/app/common/bempugMixin.pug`);
 
-    deleteCommon(host, options);
+    deleteCommon(host);
     const templateSource = apply(url('./files'), [
       filterTemplates(options),
       template({
@@ -157,10 +158,18 @@ export function bempugComponent(options: BemPugOptions): Rule {
       }),
       move(options.path || '')
     ]);
+    const mixinSource = apply(url('./common'), [
+      template({
+        ...strings,
+        ...options
+      }),
+      move('/src/app/' || '')
+    ]);
 
     const rule = chain([
       branchAndMerge(chain([
         mergeWith(templateSource),
+        mergeWith(mixinSource),
         addDeclarationToNgModule(options, !!options.export, `${options.path}/${options.name}/${options.name}-component.module` || '')
       ]), 14)
     ]);
